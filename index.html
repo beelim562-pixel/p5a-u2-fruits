@@ -459,6 +459,51 @@
     .target-box h3 { font-size: 1.2rem; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
     .target-box svg { width: 30px; height: 30px; }
 
+
+    .mm-wrap { position: relative; width: min(92vw, 640px); height: min(72vw, 520px); margin: 0 auto 16px; }
+    .mm-center {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+      width: 120px; height: 120px; border-radius: 50%;
+      background: var(--primary); color: #fff; border: 6px solid var(--secondary);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 1.2rem; text-align: center; z-index: 2;
+    }
+    .mm-slot {
+      position: absolute; width: 92px; min-height: 92px;
+      border: 4px dashed #94A3B8; border-radius: 18px; background: #fff;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 800;
+    }
+    .mm-slot.ok { border-style: solid; border-color: #2ECC71; background: #E8F8F0; }
+    .mm-slot .mm-icon { font-size: 2.2rem; line-height: 1; }
+    .mm-tray { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; min-height: 80px; margin: 12px 0; }
+    .mm-chip, .tf-chip {
+      width: 72px; height: 72px; border-radius: 16px; background: #fff;
+      border: 4px solid var(--secondary); font-size: 2.4rem;
+      display: flex; align-items: center; justify-content: center;
+      touch-action: none; cursor: grab; user-select: none;
+    }
+    .tf-q { font-size: 1.8rem; font-weight: 900; margin: 10px 0; }
+    .tf-pic { font-size: 5.5rem; margin: 8px 0; }
+    .tf-drop {
+      width: min(70vw, 220px); height: 90px; margin: 12px auto;
+      border: 5px dashed var(--secondary); border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem; background: #fff;
+    }
+    .tf-marks { display: flex; gap: 20px; justify-content: center; margin-top: 8px; }
+    .ab-q { font-size: 1.7rem; font-weight: 900; margin: 12px 0; }
+    .ab-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .ab-card {
+      width: min(42vw, 200px); min-height: 180px; border-radius: 24px;
+      border: 6px solid #333; color: #fff; font-weight: 900;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    .ab-card .ab-letter { font-size: 1.6rem; }
+    .ab-card .ab-pic { font-size: 4.5rem; }
+    .ab-a { background: #E74C3C; }
+    .ab-b { background: #2980B9; }
     .eraser-svg, .glue-svg { width: 1em; height: 1em; display: inline-block; }
   </style>
 </head>
@@ -470,6 +515,9 @@
 
   <div class="container">
     <div id="hub-view">
+      <div class="global-game-btn" onclick="openMindMap()" style="background:#27AE60;">
+        🧠 Mind map
+      </div>
       <div class="global-game-btn" onclick="openCategorizationGame()">
         📦 Matching Game (配對遊戲)
       </div>
@@ -485,6 +533,8 @@
         <button class="tab-btn" onclick="switchTab('sentence', event)">💬 Sentence Game</button>
         <button class="tab-btn" onclick="switchTab('spelling', event)">🔤 Spelling</button>
         <button class="tab-btn" onclick="switchTab('game-listen', event)">🎧 Listen & Pack</button>
+        <button class="tab-btn" onclick="switchTab('tf', event)">✔️❌ True or False</button>
+        <button class="tab-btn" onclick="switchTab('ab', event)">🅰️🅱️ A or B</button>
       </div>
 
       <div id="tab-learn" class="tab-content active">
@@ -572,6 +622,43 @@
 
         <button class="speak-btn" onclick="initListenGame()" style="background:#3498DB; margin-top: 20px;">🔄 重置遊戲 (Reset)</button>
       </div>
+
+      <div id="tab-tf" class="tab-content">
+        <div class="counter-badge"><span id="tf-count">1 / 5</span></div>
+        <div class="tf-q" id="tf-text"></div>
+        <div class="tf-pic" id="tf-pic"></div>
+        <div class="tf-drop" id="tf-drop">Drop ✅ or ❌</div>
+        <div class="tf-marks">
+          <div class="tf-chip" data-mark="yes" id="tf-yes">✅</div>
+          <div class="tf-chip" data-mark="no" id="tf-no">❌</div>
+        </div>
+        <p id="tf-fb" style="font-size:1.4rem;font-weight:800;min-height:1.6em;"></p>
+        <button class="speak-btn" onclick="initTF()" style="background:#3498DB;">🔄 Reset</button>
+      </div>
+
+      <div id="tab-ab" class="tab-content">
+        <div class="counter-badge"><span id="ab-count">1 / 3</span></div>
+        <div class="ab-q" id="ab-text"></div>
+        <div class="ab-row">
+          <button type="button" class="ab-card ab-a" id="ab-a" onclick="pickAB(0)"><span class="ab-letter">A</span><span class="ab-pic" id="ab-pic-a"></span></button>
+          <button type="button" class="ab-card ab-b" id="ab-b" onclick="pickAB(1)"><span class="ab-letter">B</span><span class="ab-pic" id="ab-pic-b"></span></button>
+        </div>
+        <p id="ab-fb" style="font-size:1.4rem;font-weight:800;min-height:1.6em;"></p>
+        <button class="speak-btn" onclick="initAB()" style="background:#3498DB;">🔄 Reset</button>
+      </div>
+    </div>
+
+    
+    <div id="mm-view" class="view-panel">
+      <button class="btn-back" onclick="showHub()">← 主頁 (Back)</button>
+      <h2 style="text-align:center;">🧠 Fruits mind map</h2>
+      <p style="text-align:center;">Drag each fruit to its place.</p>
+      <div class="mm-wrap" id="mm-wrap">
+        <div class="mm-center">FRUITS<br>🍎</div>
+      </div>
+      <div class="mm-tray" id="mm-tray"></div>
+      <p id="mm-fb" style="text-align:center;font-weight:800;font-size:1.3rem;"></p>
+      <button class="speak-btn" onclick="initMindMap()" style="background:#3498DB;display:block;margin:12px auto;">🔄 Reset</button>
     </div>
 
     <div id="cat-game-view" class="view-panel">
@@ -691,12 +778,16 @@
       document.getElementById('hub-view').style.display = 'block';
       document.getElementById('item-view').classList.remove('active');
       document.getElementById('cat-game-view').classList.remove('active');
+      const mm = document.getElementById('mm-view');
+      if (mm) mm.classList.remove('active');
     }
 
     function openModule(key) {
       currentItemKey = key;
       document.getElementById('hub-view').style.display = 'none';
       document.getElementById('cat-game-view').classList.remove('active');
+      const mm2 = document.getElementById('mm-view');
+      if (mm2) mm2.classList.remove('active');
       document.getElementById('item-view').classList.add('active');
 
       document.getElementById('learn-emoji').innerHTML = unitData[key].icon;
@@ -713,7 +804,7 @@
       if (evt && evt.target) {
         targetBtn = evt.target;
       } else {
-        const btnMap = { 'learn': 0, 'sentence': 1, 'spelling': 2, 'game-listen': 3 };
+        const btnMap = { 'learn': 0, 'sentence': 1, 'spelling': 2, 'game-listen': 3, 'tf': 4, 'ab': 5 };
         const btns = document.querySelectorAll('.tab-btn');
         if (btns[btnMap[tabName]]) targetBtn = btns[btnMap[tabName]];
       }
@@ -726,6 +817,8 @@
       if (tabName === 'sentence') initFindItemGame();
       if (tabName === 'spelling') initSpellingGame();
       if (tabName === 'game-listen') initListenGame();
+      if (tabName === 'tf') initTF();
+      if (tabName === 'ab') initAB();
     }
 
     function speakCurrentWord() { speakText(unitData[currentItemKey].word); }
@@ -1202,6 +1295,8 @@
     function openCategorizationGame() {
       document.getElementById('hub-view').style.display = 'none';
       document.getElementById('item-view').classList.remove('active');
+      const mm = document.getElementById('mm-view');
+      if (mm) mm.classList.remove('active');
       document.getElementById('cat-game-view').classList.add('active');
       initCategorizationGame();
     }
@@ -1269,6 +1364,180 @@
         };
         pool.appendChild(card);
       });
+    }
+
+    const fruitKeys = Object.keys(unitData);
+    function artPhrase(it) {
+      if (it.article === 'some') return 'These are ' + it.word;
+      return 'This is ' + it.article + ' ' + it.word;
+    }
+    function otherKey(k) {
+      const o = fruitKeys.filter(x => x !== k);
+      return o[Math.floor(Math.random() * o.length)];
+    }
+
+    function openMindMap() {
+      document.getElementById('hub-view').style.display = 'none';
+      document.getElementById('item-view').classList.remove('active');
+      document.getElementById('cat-game-view').classList.remove('active');
+      document.getElementById('mm-view').classList.add('active');
+      initMindMap();
+    }
+    function initMindMap() {
+      const wrap = document.getElementById('mm-wrap');
+      wrap.querySelectorAll('.mm-slot').forEach(s => s.remove());
+      const tray = document.getElementById('mm-tray');
+      tray.innerHTML = '';
+      document.getElementById('mm-fb').textContent = '';
+      const n = fruitKeys.length;
+      fruitKeys.forEach((k, i) => {
+        const ang = (Math.PI * 2 * i) / n - Math.PI / 2;
+        const slot = document.createElement('div');
+        slot.className = 'mm-slot';
+        slot.dataset.key = k;
+        slot.innerHTML = '<div class="mm-icon"></div><div>' + unitData[k].word + '</div>';
+        const r = 38;
+        slot.style.left = (50 + r * Math.cos(ang)) + '%';
+        slot.style.top = (50 + r * Math.sin(ang)) + '%';
+        slot.style.transform = 'translate(-50%,-50%)';
+        wrap.appendChild(slot);
+      });
+      const order = fruitKeys.slice().sort(() => Math.random() - 0.5);
+      order.forEach(k => {
+        const chip = document.createElement('div');
+        chip.className = 'mm-chip';
+        chip.textContent = unitData[k].icon;
+        chip.dataset.key = k;
+        tray.appendChild(chip);
+        bindDrag(chip, (key, x, y) => {
+          const hit = document.elementsFromPoint(x, y).find(el => el.classList && el.classList.contains('mm-slot'));
+          if (!hit) return false;
+          if (hit.dataset.key !== key) return false;
+          hit.classList.add('ok');
+          hit.querySelector('.mm-icon').textContent = unitData[key].icon;
+          chip.remove();
+          if (!document.querySelector('#mm-tray .mm-chip')) {
+            document.getElementById('mm-fb').textContent = 'Yay! Mind map complete.';
+          }
+          return true;
+        });
+      });
+    }
+
+    function bindDrag(el, onDrop) {
+      let dragging = false;
+      el.addEventListener('pointerdown', (e) => {
+        dragging = true;
+        el.setPointerCapture(e.pointerId);
+        el.style.position = 'fixed';
+        el.style.zIndex = '80';
+        el.style.left = (e.clientX - 36) + 'px';
+        el.style.top = (e.clientY - 36) + 'px';
+      });
+      el.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        el.style.left = (e.clientX - 36) + 'px';
+        el.style.top = (e.clientY - 36) + 'px';
+      });
+      el.addEventListener('pointerup', (e) => {
+        if (!dragging) return;
+        dragging = false;
+        const ok = onDrop(el.dataset.key || el.dataset.mark, e.clientX, e.clientY);
+        el.style.position = '';
+        el.style.zIndex = '';
+        el.style.left = '';
+        el.style.top = '';
+        if (ok) { /* removed by callback sometimes */ }
+      });
+    }
+
+    let tfList = [], tfI = 0;
+    function initTF() {
+      const k = currentItemKey;
+      const it = unitData[k];
+      const o1 = unitData[otherKey(k)];
+      const o2 = unitData[otherKey(k)];
+      tfList = [
+        { text: artPhrase(it) + '.', icon: it.icon, yes: true },
+        { text: artPhrase(it) + '.', icon: o1.icon, yes: false },
+        { text: artPhrase(o2) + '.', icon: it.icon, yes: false },
+        { text: artPhrase(it) + '.', icon: it.icon, yes: true },
+        { text: artPhrase(o1) + '.', icon: o1.icon, yes: true }
+      ];
+      tfI = 0;
+      renderTF();
+      ['tf-yes','tf-no'].forEach(id => {
+        const el = document.getElementById(id);
+        el.replaceWith(el.cloneNode(true));
+      });
+      bindDrag(document.getElementById('tf-yes'), dropTF);
+      bindDrag(document.getElementById('tf-no'), dropTF);
+    }
+    function renderTF() {
+      const q = tfList[tfI];
+      document.getElementById('tf-count').textContent = (tfI + 1) + ' / 5';
+      document.getElementById('tf-text').textContent = q.text;
+      document.getElementById('tf-pic').textContent = q.icon;
+      document.getElementById('tf-drop').textContent = 'Drop ✅ or ❌';
+      document.getElementById('tf-fb').textContent = '';
+    }
+    function dropTF(mark, x, y) {
+      const box = document.getElementById('tf-drop');
+      const r = box.getBoundingClientRect();
+      if (x < r.left || x > r.right || y < r.top || y > r.bottom) return false;
+      const q = tfList[tfI];
+      const correct = (mark === 'yes' && q.yes) || (mark === 'no' && !q.yes);
+      box.textContent = mark === 'yes' ? '✅' : '❌';
+      document.getElementById('tf-fb').textContent = correct ? 'Yes!' : 'Try again';
+      if (correct) {
+        setTimeout(() => {
+          tfI++;
+          if (tfI >= tfList.length) {
+            document.getElementById('tf-fb').textContent = 'Yay! 5 / 5';
+          } else renderTF();
+        }, 700);
+      }
+      return true;
+    }
+
+    let abList = [], abI = 0, abLocked = false;
+    function initAB() {
+      const k = currentItemKey;
+      const it = unitData[k];
+      abList = [0,1,2].map(() => {
+        const o = unitData[otherKey(k)];
+        const leftCorrect = Math.random() < 0.5;
+        return {
+          text: 'Which one is ' + it.word + '?',
+          pics: leftCorrect ? [it.icon, o.icon] : [o.icon, it.icon],
+          ans: leftCorrect ? 0 : 1
+        };
+      });
+      abI = 0;
+      renderAB();
+    }
+    function renderAB() {
+      const q = abList[abI];
+      abLocked = false;
+      document.getElementById('ab-count').textContent = (abI + 1) + ' / 3';
+      document.getElementById('ab-text').textContent = q.text;
+      document.getElementById('ab-pic-a').textContent = q.pics[0];
+      document.getElementById('ab-pic-b').textContent = q.pics[1];
+      document.getElementById('ab-fb').textContent = '';
+    }
+    function pickAB(n) {
+      if (abLocked) return;
+      const q = abList[abI];
+      const ok = n === q.ans;
+      document.getElementById('ab-fb').textContent = ok ? 'Yes!' : 'Try again';
+      if (!ok) return;
+      abLocked = true;
+      setTimeout(() => {
+        abI++;
+        if (abI >= abList.length) {
+          document.getElementById('ab-fb').textContent = 'Yay!';
+        } else renderAB();
+      }, 700);
     }
   </script>
 </body>
